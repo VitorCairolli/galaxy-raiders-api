@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SpaceFieldRouter.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">galaxyraiders.adapters.web</a> &gt; <span class="el_source">SpaceFieldRouter.kt</span></div><h1>SpaceFieldRouter.kt</h1><pre class="source lang-java linenums">package galaxyraiders.adapters.web
+
+import galaxyraiders.core.game.Asteroid
+import galaxyraiders.core.game.Missile
+import galaxyraiders.core.game.SpaceField
+import galaxyraiders.core.game.SpaceShip
+import galaxyraiders.ports.ui.Visualizer
+import io.javalin.apibuilder.ApiBuilder.get
+import io.javalin.apibuilder.EndpointGroup
+import io.javalin.http.Context
+
+<span class="nc" id="L12">class SpaceFieldRouter : Router, Visualizer {</span>
+<span class="nc" id="L13">  data class SpaceFieldDTO(</span>
+<span class="nc" id="L14">    val ship: SpaceShip,</span>
+<span class="nc" id="L15">    val asteroids: List&lt;Asteroid&gt;,</span>
+<span class="nc" id="L16">    val missiles: List&lt;Missile&gt;,</span>
+  )
+
+<span class="nc" id="L19">  var dto: SpaceFieldDTO? = null</span>
+    private set
+
+<span class="nc" id="L22">  override val path = &quot;/space-field&quot;</span>
+
+<span class="nc" id="L24">  override val endpoints = EndpointGroup {</span>
+<span class="nc" id="L25">    get(&quot;/&quot;, ::getSpaceField)</span>
+<span class="nc" id="L26">  }</span>
+
+  private fun getSpaceField(ctx: Context) {
+<span class="nc bnc" id="L29" title="All 2 branches missed.">    ctx.json(this.dto ?: &quot;{}&quot;)</span>
+<span class="nc" id="L30">  }</span>
+
+  override fun renderSpaceField(field: SpaceField) {
+<span class="nc" id="L33">    this.dto = SpaceFieldDTO(</span>
+<span class="nc" id="L34">      ship = field.ship,</span>
+<span class="nc" id="L35">      asteroids = field.asteroids,</span>
+<span class="nc" id="L36">      missiles = field.missiles,</span>
+    )
+<span class="nc" id="L38">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameEngine.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">galaxyraiders.core.game</a> &gt; <span class="el_source">GameEngine.kt</span></div><h1>GameEngine.kt</h1><pre class="source lang-java linenums">package galaxyraiders.core.game
+
+import galaxyraiders.Config
+import galaxyraiders.ports.RandomGenerator
+import galaxyraiders.ports.ui.Controller
+import galaxyraiders.ports.ui.Controller.PlayerCommand
+import galaxyraiders.ports.ui.Visualizer
+import kotlin.system.measureTimeMillis
+
+const val MILLISECONDS_PER_SECOND: Int = 1000
+
+object GameEngineConfig {
+<span class="nc" id="L13">  private val config = Config(prefix = &quot;GR__CORE__GAME__GAME_ENGINE__&quot;)</span>
+
+<span class="nc" id="L15">  val frameRate = config.get&lt;Int&gt;(&quot;FRAME_RATE&quot;)</span>
+<span class="nc" id="L16">  val spaceFieldWidth = config.get&lt;Int&gt;(&quot;SPACEFIELD_WIDTH&quot;)</span>
+<span class="nc" id="L17">  val spaceFieldHeight = config.get&lt;Int&gt;(&quot;SPACEFIELD_HEIGHT&quot;)</span>
+<span class="nc" id="L18">  val asteroidProbability = config.get&lt;Double&gt;(&quot;ASTEROID_PROBABILITY&quot;)</span>
+<span class="nc" id="L19">  val coefficientRestitution = config.get&lt;Double&gt;(&quot;COEFFICIENT_RESTITUTION&quot;)</span>
+
+<span class="nc" id="L21">  val msPerFrame: Int = MILLISECONDS_PER_SECOND / this.frameRate</span>
+}
+
+<span class="nc" id="L24">@Suppress(&quot;TooManyFunctions&quot;)</span>
+<span class="nc" id="L25">class GameEngine(</span>
+<span class="nc" id="L26">  val generator: RandomGenerator,</span>
+<span class="nc" id="L27">  val controller: Controller,</span>
+<span class="nc" id="L28">  val visualizer: Visualizer,</span>
+) {
+<span class="nc" id="L30">  val field = SpaceField(</span>
+<span class="nc" id="L31">    width = GameEngineConfig.spaceFieldWidth,</span>
+<span class="nc" id="L32">    height = GameEngineConfig.spaceFieldHeight,</span>
+<span class="nc" id="L33">    generator = generator</span>
+  )
+
+<span class="nc" id="L36">  var playing = true</span>
+
+  fun execute() {
+<span class="nc" id="L39">    while (true) {</span>
+<span class="nc" id="L40">      val duration = measureTimeMillis { this.tick() }</span>
+
+<span class="nc" id="L42">      Thread.sleep(</span>
+<span class="nc" id="L43">        maxOf(0, GameEngineConfig.msPerFrame - duration)</span>
+      )
+    }
+  }
+
+  fun execute(maxIterations: Int) {
+<span class="nc bnc" id="L49" title="All 2 branches missed.">    repeat(maxIterations) {</span>
+<span class="nc" id="L50">      this.tick()</span>
+<span class="nc" id="L51">    }</span>
+<span class="nc" id="L52">  }</span>
+
+  fun tick() {
+<span class="nc" id="L55">    this.processPlayerInput()</span>
+<span class="nc" id="L56">    this.updateSpaceObjects()</span>
+<span class="nc" id="L57">    this.renderSpaceField()</span>
+<span class="nc" id="L58">  }</span>
+
+  fun processPlayerInput() {
+<span class="nc bnc" id="L61" title="All 2 branches missed.">    this.controller.nextPlayerCommand()?.also {</span>
+<span class="nc bnc" id="L62" title="All 7 branches missed.">      when (it) {</span>
+        PlayerCommand.MOVE_SHIP_UP -&gt;
+<span class="nc" id="L64">          this.field.ship.boostUp()</span>
+        PlayerCommand.MOVE_SHIP_DOWN -&gt;
+<span class="nc" id="L66">          this.field.ship.boostDown()</span>
+        PlayerCommand.MOVE_SHIP_LEFT -&gt;
+<span class="nc" id="L68">          this.field.ship.boostLeft()</span>
+        PlayerCommand.MOVE_SHIP_RIGHT -&gt;
+<span class="nc" id="L70">          this.field.ship.boostRight()</span>
+        PlayerCommand.LAUNCH_MISSILE -&gt;
+<span class="nc" id="L72">          this.field.generateMissile()</span>
+        PlayerCommand.PAUSE_GAME -&gt;
+<span class="nc bnc" id="L74" title="All 2 branches missed.">          this.playing = !this.playing</span>
+      }
+<span class="nc" id="L76">    }</span>
+<span class="nc" id="L77">  }</span>
+
+  fun updateSpaceObjects() {
+<span class="nc bnc" id="L80" title="All 2 branches missed.">    if (!this.playing) return</span>
+<span class="nc" id="L81">    this.handleCollisions()</span>
+<span class="nc" id="L82">    this.moveSpaceObjects()</span>
+<span class="nc" id="L83">    this.trimSpaceObjects()</span>
+<span class="nc" id="L84">    this.generateAsteroids()</span>
+<span class="nc" id="L85">  }</span>
+
+  fun handleCollisions() {
+<span class="nc" id="L88">    this.field.spaceObjects.forEachPair {</span>
+<span class="nc" id="L89">        (first, second) -&gt;</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">      if (first.impacts(second)) {</span>
+<span class="nc" id="L91">        first.collideWith(second, GameEngineConfig.coefficientRestitution)</span>
+      }
+<span class="nc" id="L93">    }</span>
+<span class="nc" id="L94">  }</span>
+
+  fun moveSpaceObjects() {
+<span class="nc" id="L97">    this.field.moveShip()</span>
+<span class="nc" id="L98">    this.field.moveAsteroids()</span>
+<span class="nc" id="L99">    this.field.moveMissiles()</span>
+<span class="nc" id="L100">  }</span>
+
+  fun trimSpaceObjects() {
+<span class="nc" id="L103">    this.field.trimAsteroids()</span>
+<span class="nc" id="L104">    this.field.trimMissiles()</span>
+<span class="nc" id="L105">  }</span>
+
+  fun generateAsteroids() {
+<span class="nc" id="L108">    val probability = generator.generateProbability()</span>
+
+<span class="nc bnc" id="L110" title="All 2 branches missed.">    if (probability &lt;= GameEngineConfig.asteroidProbability) {</span>
+<span class="nc" id="L111">      this.field.generateAsteroid()</span>
+    }
+<span class="nc" id="L113">  }</span>
+
+  fun renderSpaceField() {
+<span class="nc" id="L116">    this.visualizer.renderSpaceField(this.field)</span>
+<span class="nc" id="L117">  }</span>
+}
+
+fun &lt;T&gt; List&lt;T&gt;.forEachPair(action: (Pair&lt;T, T&gt;) -&gt; Unit) {
+<span class="nc bnc" id="L121" title="All 2 branches missed.">  for (i in 0 until this.size) {</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">    for (j in i + 1 until this.size) {</span>
+<span class="nc" id="L123">      action(Pair(this[i], this[j]))</span>
+    }
+  }
+<span class="nc" id="L126">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

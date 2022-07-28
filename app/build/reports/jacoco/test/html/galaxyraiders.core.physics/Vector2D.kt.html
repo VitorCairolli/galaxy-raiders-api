@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Vector2D.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">galaxyraiders.core.physics</a> &gt; <span class="el_source">Vector2D.kt</span></div><h1>Vector2D.kt</h1><pre class="source lang-java linenums">package galaxyraiders.core.physics
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import kotlin.math.*
+import kotlin.reflect.jvm.internal.impl.descriptors.PossiblyInnerType
+
+<span class="fc" id="L7">@JsonIgnoreProperties(&quot;unit&quot;, &quot;normal&quot;, &quot;degree&quot;, &quot;magnitude&quot;)</span>
+<span class="fc" id="L8">data class Vector2D(val dx: Double, val dy: Double) {</span>
+  override fun toString(): String {
+<span class="nc" id="L10">    return &quot;Vector2D(dx=$dx, dy=$dy)&quot;</span>
+  }
+
+  val magnitude: Double
+<span class="fc" id="L14">    get() = sqrt(this.dx.pow(2) + this.dy.pow(2))</span>
+
+  val radiant: Double
+    get(){
+<span class="nc" id="L18">      val point = Point2D(this.unit.dx, this.unit.dy)</span>
+<span class="nc" id="L19">      val sign = sign(this.unit.dy)</span>
+<span class="nc" id="L20">      val size = point.distance(Point2D(1.0, 0.0))</span>
+
+<span class="nc" id="L22">      return sign * acos(1 - size.pow(2) / 2.0)</span>
+    }
+
+  val degree: Double
+<span class="nc" id="L26">    get() = this.radiant * 180/ PI</span>
+
+  val unit: Vector2D
+<span class="fc" id="L29">    get() = this / this.magnitude</span>
+
+  val normal: Vector2D
+<span class="fc" id="L32">    get() = Vector2D(this.unit.dy, - this.unit.dx)</span>
+
+  operator fun times(scalar: Double): Vector2D {
+<span class="nc" id="L35">    return Vector2D(this.dx * scalar, this.dy * scalar)</span>
+  }
+
+  operator fun div(scalar: Double): Vector2D {
+<span class="fc" id="L39">    return Vector2D(this.dx / scalar, this.dy / scalar)</span>
+  }
+
+  operator fun times(v: Vector2D): Double {
+<span class="nc" id="L43">    return (this.dx * v.dx) + (this.dy * v.dy)</span>
+  }
+
+  operator fun plus(v: Vector2D): Vector2D {
+<span class="nc" id="L47">    return Vector2D(v.dx + this.dx, v.dy + this.dy)</span>
+  }
+
+  operator fun plus(p: Point2D): Point2D {
+<span class="nc" id="L51">    return Point2D(this.dx + p.x, this.dy + p.y)</span>
+  }
+
+  operator fun unaryMinus(): Vector2D {
+<span class="nc" id="L55">    return Vector2D(-this.dx, -this.dy)</span>
+  }
+
+  operator fun minus(v: Vector2D): Vector2D {
+<span class="nc" id="L59">    return Vector2D(this.dx - v.dx, this.dy - v.dy)</span>
+  }
+
+  fun scalarProject(target: Vector2D): Double {
+<span class="nc" id="L63">    return this * target.unit</span>
+  }
+
+  fun vectorProject(target: Vector2D): Vector2D {
+<span class="nc" id="L67">    return scalarProject(target) * target.unit</span>
+  }
+}
+
+operator fun Double.times(v: Vector2D): Vector2D {
+<span class="nc" id="L72">  return Vector2D(v.dx * this, v.dy * this)</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

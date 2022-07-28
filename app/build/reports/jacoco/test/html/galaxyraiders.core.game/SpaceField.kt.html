@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SpaceField.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">galaxyraiders.core.game</a> &gt; <span class="el_source">SpaceField.kt</span></div><h1>SpaceField.kt</h1><pre class="source lang-java linenums">package galaxyraiders.core.game
+
+import galaxyraiders.Config
+import galaxyraiders.core.physics.Point2D
+import galaxyraiders.core.physics.Vector2D
+import galaxyraiders.ports.RandomGenerator
+
+object SpaceFieldConfig {
+<span class="nc" id="L9">  private val config = Config(prefix = &quot;GR__CORE__GAME__SPACE_FIELD__&quot;)</span>
+
+<span class="nc" id="L11">  val missileRadius = config.get&lt;Double&gt;(&quot;MISSILE_RADIUS&quot;)</span>
+<span class="nc" id="L12">  val missileMass = config.get&lt;Double&gt;(&quot;MISSILE_MASS&quot;)</span>
+<span class="nc" id="L13">  val missileDistanceFromShip = config.get&lt;Double&gt;(&quot;MISSILE_DISTANCE_FROM_SHIP&quot;)</span>
+
+<span class="nc" id="L15">  val asteroidMaxYaw = config.get&lt;Double&gt;(&quot;ASTEROID_MAX_YAW&quot;)</span>
+<span class="nc" id="L16">  val asteroidMinSpeed = config.get&lt;Double&gt;(&quot;ASTEROID_MIN_SPEED&quot;)</span>
+<span class="nc" id="L17">  val asteroidMaxSpeed = config.get&lt;Double&gt;(&quot;ASTEROID_MAX_SPEED&quot;)</span>
+
+<span class="nc" id="L19">  val asteroidMinRadius = config.get&lt;Int&gt;(&quot;ASTEROID_MIN_RADIUS&quot;)</span>
+<span class="nc" id="L20">  val asteroidMaxRadius = config.get&lt;Int&gt;(&quot;ASTEROID_MAX_RADIUS&quot;)</span>
+<span class="nc" id="L21">  val asteroidRadiusMultiplier = config.get&lt;Double&gt;(&quot;ASTEROID_RADIUS_MULTIPLIER&quot;)</span>
+
+<span class="nc" id="L23">  val asteroidMinMass = config.get&lt;Int&gt;(&quot;ASTEROID_MIN_MASS&quot;)</span>
+<span class="nc" id="L24">  val asteroidMaxMass = config.get&lt;Int&gt;(&quot;ASTEROID_MAX_MASS&quot;)</span>
+<span class="nc" id="L25">  val asteroidMassMultiplier = config.get&lt;Double&gt;(&quot;ASTEROID_MASS_MULTIPLIER&quot;)</span>
+}
+
+<span class="nc" id="L28">@Suppress(&quot;TooManyFunctions&quot;)</span>
+<span class="nc" id="L29">data class SpaceField(val width: Int, val height: Int, val generator: RandomGenerator) {</span>
+<span class="nc" id="L30">  val boundaryX = 0.0..width.toDouble()</span>
+<span class="nc" id="L31">  val boundaryY = 0.0..height.toDouble()</span>
+
+<span class="nc" id="L33">  val ship = initializeShip()</span>
+
+<span class="nc" id="L35">  var missiles: List&lt;Missile&gt; = emptyList()</span>
+    private set
+
+<span class="nc" id="L38">  var asteroids: List&lt;Asteroid&gt; = emptyList()</span>
+    private set
+
+  val spaceObjects: List&lt;SpaceObject&gt;
+<span class="nc" id="L42">    get() = listOf(this.ship) + this.missiles + this.asteroids</span>
+
+  fun moveShip() {
+<span class="nc" id="L45">    this.ship.move(boundaryX, boundaryY)</span>
+<span class="nc" id="L46">  }</span>
+
+  fun moveMissiles() {
+<span class="nc" id="L49">    this.missiles.forEach { it.move() }</span>
+<span class="nc" id="L50">  }</span>
+
+  fun moveAsteroids() {
+<span class="nc" id="L53">    this.asteroids.forEach { it.move() }</span>
+<span class="nc" id="L54">  }</span>
+
+  fun generateMissile() {
+<span class="nc" id="L57">    this.missiles += this.createMissile()</span>
+<span class="nc" id="L58">  }</span>
+
+  fun generateAsteroid() {
+<span class="nc" id="L61">    this.asteroids += this.createAsteroidWithRandomProperties()</span>
+<span class="nc" id="L62">  }</span>
+
+  fun trimMissiles() {
+<span class="nc" id="L65">    this.missiles = this.missiles.filter {</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">      it.inBoundaries(this.boundaryX, this.boundaryY)</span>
+    }
+<span class="nc" id="L68">  }</span>
+
+  fun trimAsteroids() {
+<span class="nc" id="L71">    this.asteroids = this.asteroids.filter {</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">      it.inBoundaries(this.boundaryX, this.boundaryY)</span>
+    }
+<span class="nc" id="L74">  }</span>
+
+  private fun initializeShip(): SpaceShip {
+<span class="nc" id="L77">    return SpaceShip(</span>
+<span class="nc" id="L78">      initialPosition = standardShipPosition(),</span>
+<span class="nc" id="L79">      initialVelocity = standardShipVelocity(),</span>
+<span class="nc" id="L80">      radius = 1.0,</span>
+<span class="nc" id="L81">      mass = 10.0,</span>
+    )
+  }
+
+  private fun standardShipPosition(): Point2D {
+<span class="nc" id="L86">    return Point2D(x = this.width / 2.0, y = 1.0)</span>
+  }
+
+  private fun standardShipVelocity(): Vector2D {
+<span class="nc" id="L90">    return Vector2D(dx = 0.0, dy = 0.0)</span>
+  }
+
+  private fun createMissile(): Missile {
+<span class="nc" id="L94">    return Missile(</span>
+<span class="nc" id="L95">      initialPosition = defineMissilePosition(SpaceFieldConfig.missileRadius),</span>
+<span class="nc" id="L96">      initialVelocity = defineMissileVelocity(),</span>
+<span class="nc" id="L97">      radius = SpaceFieldConfig.missileRadius,</span>
+<span class="nc" id="L98">      mass = SpaceFieldConfig.missileMass,</span>
+    )
+  }
+
+  private fun defineMissilePosition(missileRadius: Double): Point2D {
+<span class="nc" id="L103">    return ship.center + Vector2D(dx = 0.0, dy = ship.radius + missileRadius + SpaceFieldConfig.missileDistanceFromShip)</span>
+  }
+
+  private fun defineMissileVelocity(): Vector2D {
+<span class="nc" id="L107">    return Vector2D(dx = 0.0, dy = 1.0)</span>
+  }
+
+  private fun createAsteroidWithRandomProperties(): Asteroid {
+<span class="nc" id="L111">    return Asteroid(</span>
+<span class="nc" id="L112">      initialPosition = generateRandomAsteroidPosition(),</span>
+<span class="nc" id="L113">      initialVelocity = generateRandomAsteroidVelocity(),</span>
+<span class="nc" id="L114">      radius = generateRandomAsteroidRadius(),</span>
+<span class="nc" id="L115">      mass = generateRandomAsteroidMass(),</span>
+    )
+  }
+
+  private fun generateRandomAsteroidPosition(): Point2D {
+<span class="nc" id="L120">    return Point2D(</span>
+<span class="nc" id="L121">      x = this.generator.generateIntegerInRange(0, width).toDouble(),</span>
+<span class="nc" id="L122">      y = this.height.toDouble(),</span>
+    )
+  }
+
+  private fun generateRandomAsteroidVelocity(): Vector2D {
+<span class="nc" id="L127">    val asteroidYaw = this.generator.generateDoubleInInterval(</span>
+<span class="nc" id="L128">      min = -SpaceFieldConfig.asteroidMaxYaw, max = SpaceFieldConfig.asteroidMaxYaw</span>
+    )
+
+<span class="nc" id="L131">    val asteroidSpeed = -1 * this.generator.generateDoubleInInterval(</span>
+<span class="nc" id="L132">      min = SpaceFieldConfig.asteroidMinSpeed,</span>
+<span class="nc" id="L133">      max = SpaceFieldConfig.asteroidMaxSpeed,</span>
+    )
+
+<span class="nc" id="L136">    return Vector2D(dx = asteroidYaw, dy = asteroidSpeed)</span>
+  }
+
+  private fun generateRandomAsteroidRadius(): Double {
+<span class="nc" id="L140">    val scaledRadius = this.generator.generateIntegerInRange(</span>
+<span class="nc" id="L141">      min = SpaceFieldConfig.asteroidMinRadius,</span>
+<span class="nc" id="L142">      max = SpaceFieldConfig.asteroidMaxRadius,</span>
+    )
+
+<span class="nc" id="L145">    return scaledRadius * SpaceFieldConfig.asteroidRadiusMultiplier</span>
+  }
+
+  private fun generateRandomAsteroidMass(): Double {
+<span class="nc" id="L149">    val scaledMass = this.generator.generateIntegerInRange(</span>
+<span class="nc" id="L150">      min = SpaceFieldConfig.asteroidMinMass,</span>
+<span class="nc" id="L151">      max = SpaceFieldConfig.asteroidMaxMass,</span>
+    )
+
+<span class="nc" id="L154">    return scaledMass * SpaceFieldConfig.asteroidMassMultiplier</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

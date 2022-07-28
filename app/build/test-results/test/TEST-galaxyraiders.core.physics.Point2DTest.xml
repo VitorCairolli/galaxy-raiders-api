@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Given a 2D point" tests="60" skipped="0" failures="0" errors="0" timestamp="2022-07-28T21:32:41" hostname="VitorCairolli" time="0.304">
+  <properties/>
+  <testcase name="(Point2D(x=0.0, y=0.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.13"/>
+  <testcase name="(Point2D(x=1.0, y=2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=-1.0, y=2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=-1.0, y=-2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=1.0, y=-2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.002"/>
+  <testcase name="(Point2D(x=0.0, y=0.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.005"/>
+  <testcase name="(Point2D(x=1.0, y=2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=-1.0, y=2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.002"/>
+  <testcase name="(Point2D(x=-1.0, y=-2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=1.0, y=-2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.0"/>
+  <testcase name="(Point2D(x=0.0, y=0.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.004"/>
+  <testcase name="(Point2D(x=1.0, y=2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.002"/>
+  <testcase name="(Point2D(x=-1.0, y=2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=-1.0, y=-2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=1.0, y=-2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=0.0, y=0.0), Point2D(x=0.0, y=0.0), 0.0)" classname="galaxyraiders.core.physics.Point2DTest" time="0.006"/>
+  <testcase name="(Point2D(x=0.0, y=0.0), Point2D(x=1.0, y=2.0), 2.24)" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=0.0, y=0.0), Point2D(x=-1.0, y=2.0), 2.24)" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=0.0, y=0.0), Point2D(x=-1.0, y=-2.0), 2.24)" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=0.0, y=0.0), Point2D(x=1.0, y=-2.0), 2.24)" classname="galaxyraiders.core.physics.Point2DTest" time="0.003"/>
+  <testcase name="(Point2D(x=1.0, y=2.0), Point2D(x=0.0, y=0.0), 2.24)" classname="galaxyraiders.core.physics.Point2DTest" time="0.002"/>
+  <testcase name="(Point2D(x=1.0, y=2.0), Point2D(x=1.0, y=2.0), 0.0)" classname="galaxyraiders.core.physics.Point2DTest" time="0.002"/>
+  <testcase name="(Point2D(x=1.0, y=2.0), Point2D(x=-1.0, y=2.0), 2.0)" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=1.0, y=2.0), Point2D(x=-1.0, y=-2.0), 4.47)" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=1.0, y=2.0), Point2D(x=1.0, y=-2.0), 4.0)" classname="galaxyraiders.core.physics.Point2DTest" time="0.0"/>
+  <testcase name="(Point2D(x=-1.0, y=2.0), Point2D(x=0.0, y=0.0), 2.24)" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=-1.0, y=2.0), Point2D(x=1.0, y=2.0), 2.0)" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=-1.0, y=2.0), Point2D(x=-1.0, y=2.0), 0.0)" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=-1.0, y=2.0), Point2D(x=-1.0, y=-2.0), 4.0)" classname="galaxyraiders.core.physics.Point2DTest" time="0.0"/>
+  <testcase name="(Point2D(x=-1.0, y=2.0), Point2D(x=1.0, y=-2.0), 4.47)" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=-1.0, y=-2.0), Point2D(x=0.0, y=0.0), 2.24)" classname="galaxyraiders.core.physics.Point2DTest" time="0.002"/>
+  <testcase name="(Point2D(x=-1.0, y=-2.0), Point2D(x=1.0, y=2.0), 4.47)" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=-1.0, y=-2.0), Point2D(x=-1.0, y=2.0), 4.0)" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=-1.0, y=-2.0), Point2D(x=-1.0, y=-2.0), 0.0)" classname="galaxyraiders.core.physics.Point2DTest" time="0.0"/>
+  <testcase name="(Point2D(x=-1.0, y=-2.0), Point2D(x=1.0, y=-2.0), 2.0)" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=1.0, y=-2.0), Point2D(x=0.0, y=0.0), 2.24)" classname="galaxyraiders.core.physics.Point2DTest" time="0.0"/>
+  <testcase name="(Point2D(x=1.0, y=-2.0), Point2D(x=1.0, y=2.0), 4.0)" classname="galaxyraiders.core.physics.Point2DTest" time="0.0"/>
+  <testcase name="(Point2D(x=1.0, y=-2.0), Point2D(x=-1.0, y=2.0), 4.47)" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=1.0, y=-2.0), Point2D(x=-1.0, y=-2.0), 2.0)" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=1.0, y=-2.0), Point2D(x=1.0, y=-2.0), 0.0)" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=0.0, y=0.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.004"/>
+  <testcase name="(Point2D(x=1.0, y=2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.003"/>
+  <testcase name="(Point2D(x=-1.0, y=2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=-1.0, y=-2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=1.0, y=-2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(0.0, 0.0)" classname="galaxyraiders.core.physics.Point2DTest" time="0.004"/>
+  <testcase name="(1.0, 2.0)" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(-1.0, 2.0)" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(-1.0, -2.0)" classname="galaxyraiders.core.physics.Point2DTest" time="0.0"/>
+  <testcase name="(1.0, -2.0)" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=0.0, y=0.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.002"/>
+  <testcase name="(Point2D(x=1.0, y=2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=-1.0, y=2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=-1.0, y=-2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.0"/>
+  <testcase name="(Point2D(x=1.0, y=-2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=0.0, y=0.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.004"/>
+  <testcase name="(Point2D(x=1.0, y=2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=-1.0, y=2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=-1.0, y=-2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <testcase name="(Point2D(x=1.0, y=-2.0))" classname="galaxyraiders.core.physics.Point2DTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

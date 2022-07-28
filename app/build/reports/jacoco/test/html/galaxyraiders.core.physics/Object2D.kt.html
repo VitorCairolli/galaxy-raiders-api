@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Object2D.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">galaxyraiders.core.physics</a> &gt; <span class="el_source">Object2D.kt</span></div><h1>Object2D.kt</h1><pre class="source lang-java linenums">package galaxyraiders.core.physics
+
+<span class="nc" id="L3">open class Object2D(</span>
+  initialPosition: Point2D,
+  initialVelocity: Vector2D,
+<span class="nc" id="L6">  val radius: Double,</span>
+<span class="nc" id="L7">  val mass: Double</span>
+) {
+<span class="nc" id="L9">  var center: Point2D = initialPosition</span>
+<span class="nc" id="L10">    protected set</span>
+
+<span class="nc" id="L12">  var velocity: Vector2D = initialVelocity</span>
+<span class="nc" id="L13">    protected set</span>
+
+  fun move() {
+<span class="nc" id="L16">    this.center += this.velocity</span>
+<span class="nc" id="L17">  }</span>
+
+  fun shift(force: Vector2D) {
+<span class="nc" id="L20">    this.velocity += force</span>
+<span class="nc" id="L21">  }</span>
+
+  fun distance(p: Point2D): Double {
+<span class="nc" id="L24">    return this.center.distance(p)</span>
+  }
+
+  fun impacts(p: Point2D): Boolean {
+<span class="nc bnc" id="L28" title="All 2 branches missed.">    return this.distance(p) &lt;= this.radius</span>
+  }
+
+  fun distance(so: Object2D): Double {
+<span class="nc bnc" id="L32" title="All 2 branches missed.">    if (so == this) return 0.0</span>
+
+<span class="nc" id="L34">    val distanceBetweenCenters = this.center.distance(so.center)</span>
+<span class="nc" id="L35">    val sumRadiuses = this.radius + so.radius</span>
+
+<span class="nc bnc" id="L37" title="All 2 branches missed.">    val objectsInsideEachOther = distanceBetweenCenters &lt; sumRadiuses</span>
+
+<span class="nc" id="L39">    return when (objectsInsideEachOther) {</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">      true -&gt; 0.0</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">      false -&gt; distanceBetweenCenters - sumRadiuses</span>
+    }
+  }
+
+  fun impacts(so: Object2D): Boolean {
+<span class="nc bnc" id="L46" title="All 2 branches missed.">    if (so == this) return false</span>
+<span class="nc bnc" id="L47" title="All 2 branches missed.">    return this.distance(so) &lt;= 0.0</span>
+  }
+
+  override fun toString(): String {
+<span class="nc" id="L51">    return &quot;Object2D at ${this.center}&quot;</span>
+  }
+
+  /**
+   * Collides with another space object.
+   *
+   * @param target Another space object we are colliding with.
+   * @param coefficientRestitution Ratio of conservation of momentum during the collision.
+   *
+   * @see https://arxiv.org/abs/1909.10053
+   */
+  fun collideWith(target: Object2D, coefficientRestitution: Double) {
+<span class="nc bnc" id="L63" title="All 4 branches missed.">    assert(</span>
+<span class="nc bnc" id="L64" title="All 4 branches missed.">      coefficientRestitution &gt;= 0.0 &amp;&amp; coefficientRestitution &lt;= 1.0,</span>
+<span class="nc" id="L65">      { &quot;Coefficient of restitution must be in the interval [0.0, 1.0]&quot; }</span>
+    )
+
+<span class="nc" id="L68">    val deltaVelocity = calculateImpactVelocityVariation(target)</span>
+
+<span class="nc" id="L70">    val impactImpulse = calculateImpactImpulse(target, coefficientRestitution, deltaVelocity)</span>
+
+<span class="nc" id="L72">    val ourVelocityChange = impactImpulse / this.mass</span>
+<span class="nc" id="L73">    this.shift(ourVelocityChange)</span>
+
+<span class="nc" id="L75">    val theirVelocityChange = -impactImpulse / target.mass</span>
+<span class="nc" id="L76">    target.shift(theirVelocityChange)</span>
+<span class="nc" id="L77">  }</span>
+
+  /**
+   * Calculates the variation of velocity between two objects in a
+   * collision. This variations affects only the direction of impact.
+   *
+   * @param target Another space object we are colliding with.
+   *
+   * @see https://arxiv.org/abs/1909.10053
+   */
+  private fun calculateImpactVelocityVariation(target: Object2D): Vector2D {
+<span class="nc" id="L88">    val impactVersor = this.center.impactDirection(target.center)</span>
+
+<span class="nc" id="L90">    val ourImpactVelocity = this.velocity.vectorProject(impactVersor)</span>
+<span class="nc" id="L91">    val theirImpactVelocity = target.velocity.vectorProject(impactVersor)</span>
+
+<span class="nc" id="L93">    val deltaVelocity = theirImpactVelocity - ourImpactVelocity</span>
+<span class="nc" id="L94">    return deltaVelocity</span>
+  }
+
+  /**
+   * Calculates the impulse, i.e., the variation of momentum in a
+   * collision with another space object.
+   *
+   * @param target Another space object we are colliding with.
+   * @param coefficientRestitution Ratio of conservation of momentum during the collision.
+   * @param deltaVelocity Variation of velocity.
+   *
+   * @see https://en.wikipedia.org/wiki/Coefficient_of_restitution
+   * @see https://en.wikipedia.org/wiki/Inelastic_collision#Formula
+   * @see https://en.wikipedia.org/wiki/Coefficient_of_restitution#Derivation
+   */
+  private fun calculateImpactImpulse(
+    target: Object2D,
+    coefficientRestitution: Double,
+    deltaVelocity: Vector2D
+  ): Vector2D {
+<span class="nc" id="L114">    return (</span>
+<span class="nc" id="L115">      ((this.mass * target.mass) / (this.mass + target.mass)) *</span>
+<span class="nc" id="L116">        (1 + coefficientRestitution) * deltaVelocity</span>
+      )
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
